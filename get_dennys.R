@@ -18,11 +18,13 @@ East   = get_url(limit=10000, zip_code=63101, radius=2000)  # St. Louis, MO
 West   = get_url(limit=10000, zip_code=80210, radius=2000)  # Denver, CO
 Alaska = get_url(limit=10000, zip_code=99701, radius=2000)  # Fairbanks, AK
 Hawaii = get_url(limit=10000, zip_code=96801, radius=2000)  # Honalulu, HI
+locals  = c(West, East, Alaska, Hawaii)
 
 # create a data directory
 dir.create("data/dennys",recursive = TRUE, showWarnings = FALSE)
 
 # download xml files with locations
-for (i in c(West, East, Alaska, Hawaii)) {
-    download.file(i, dest=paste0('data/dennys/', deparse(substitute(i)),'.xml'))
+for (i in seq_along(locals)) {
+    download.file(locals[i], dest=paste0('data/dennys/file',
+                                         as.character(i),'.xml'))
 }
