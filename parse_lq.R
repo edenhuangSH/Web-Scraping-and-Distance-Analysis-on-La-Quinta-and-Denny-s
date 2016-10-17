@@ -36,9 +36,9 @@ for(i in seq_along(files)) {
         address = paste(hotel_info[1:2],collapse="\n"),
         phone = hotel_info[3] %>% str_replace("Phone: ", ""),
         fax   = hotel_info[4] %>% str_replace("Fax: ", ""),
-        n_rooms = n_rooms,
-        lat   = lat_long[,2],
-        long  = lat_long[,3]
+        n_rooms = as.numeric(n_rooms),
+        lat   = as.numeric(lat_long[,2]),
+        long  = as.numeric(lat_long[,3])
   )
 }
 

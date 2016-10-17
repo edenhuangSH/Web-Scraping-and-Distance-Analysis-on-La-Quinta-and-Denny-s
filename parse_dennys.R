@@ -26,8 +26,9 @@ for(i in seq_along(files)) {
     # store information in a list format
     res[[i]] = data_frame(
         state = state,
-        lat   = lat,
-        long  = long)
+        lat   = as.numeric(lat),
+        long  = as.numeric(long)
+    )
 }
 
 dennys = bind_rows(res)

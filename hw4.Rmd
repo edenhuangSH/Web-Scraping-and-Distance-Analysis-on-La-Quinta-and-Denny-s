@@ -17,6 +17,8 @@ Our group scraped location data from La Quinta and Denny's websites to see if th
 
 ```{r}
 library('geosphere')
+load('data/lq.Rdata')
+load('data/dennys.Rdata')
 ```
 
 ### Discussion 
