@@ -27,7 +27,7 @@ for (i in 1:nrow(hotels)) {
   s = hotels$address[i]  %>%
     strsplit(., ",") %>%
     unlist() %>%
-    .[3] %>%
+    tail(n = 1) %>%
     strsplit(.," ") %>%
     unlist() %>%
     .[2]
@@ -58,8 +58,8 @@ dennys_states = unique(dennysLoc$State)
 common_states = intersect(lq_states, dennys_states)
 
 # Selecting Denny's and La Quita that exist in states having both of them
-dennys_commonStates = dennysLoc[dennysLoc$state %in% common_states,]
-lq_commonStates = lqLoc[lqLoc$state %in% common_states,]
+dennys_commonStates = dennysLoc[dennysLoc$State %in% common_states,]
+lq_commonStates = lqLoc[lqLoc$State %in% common_states,]
 
 # Plot Denny's and La Quinta on the map
 
