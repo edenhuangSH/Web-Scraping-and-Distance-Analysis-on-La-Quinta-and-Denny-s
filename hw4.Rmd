@@ -18,6 +18,7 @@ Our group scraped location data from La Quinta and Denny's websites to see if th
 ```{r}
 library('maps')
 library('datasets')
+library('ggplot2')
 load('data/lq.Rdata')
 load('data/dennys.Rdata')
 # Extract the state of La Quinta Hotels
@@ -61,6 +62,21 @@ dennys_commonStates = dennysLoc[dennysLoc$State %in% common_states,]
 lq_commonStates = lqLoc[lqLoc$State %in% common_states,]
 
 # Plot Denny's and La Quinta on the map
+# Make a new data frame that stores all La Quinta and Denny's information for ggplot
+lq_melt = data.frame(Type = rep("La Quinta", nrow(lq_commonStates))) %>%
+  cbind(lq_commonStates)
+dennys_melt = data.frame(Type = rep("Denny's", nrow(dennys_commonStates))) %>%
+  cbind(dennys_commonStates)
+lq_dennys = rbind(lq_melt,dennys_melt)
+lq_dennys$Type = as.factor(lq_dennys$Type)
+
+# Create a data frame that stores information of all US states
+all_states = map_data("state")
+
+# Do the plot
+ggplot() + 
+  geom_polygon(data = all_states, aes(x=long, y=lat, group = group), colour="white", fill="blue") +
+  geom_point(data = lq_dennys, aes(x=Longitude, y=Lattitude, group=Type, color=Type))
 
 # Calculate the distance between each of the Denny's and La Quinta in the common_states
 ```
