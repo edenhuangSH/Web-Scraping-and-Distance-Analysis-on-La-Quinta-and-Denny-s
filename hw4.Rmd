@@ -16,9 +16,53 @@ Our group scraped location data from La Quinta and Denny's websites to see if th
 ### Task 3 - Distance Analysis
 
 ```{r}
-library('geosphere')
+library('maps')
+library('datasets')
 load('data/lq.Rdata')
 load('data/dennys.Rdata')
+# Extract the state of La Quinta Hotels
+lqStates = rep(NA, nrow(hotels))
+for (i in 1:nrow(hotels)) {
+  s = hotels$address[i]  %>%
+    strsplit(., ",") %>%
+    unlist() %>%
+    tail(n = 1) %>%
+    strsplit(.," ") %>%
+    unlist() %>%
+    .[2]
+  if (s %in% c(state.abb, "DC")) {
+    lqStates[i] = s
+  }
+}
+
+# Build data frames for La Quinta and Denny's that include state, lattitude and longitude
+lqLoc = data.frame(State = lqStates, 
+                   Lattitude = as.numeric(hotels$lat), 
+                   Longitude = as.numeric(hotels$long))
+dennysLoc = data.frame(State = dennys$state, 
+                   Lattitude = as.numeric(dennys$lat), 
+                   Longitude = as.numeric(dennys$long))
+
+#  Remove the denny's and La Quinta with no State, which means they are outside of US
+lqLoc = lqLoc[!is.na(lqLoc$State),]
+dennysLoc = dennysLoc[dennysLoc$State != "",]
+
+# Re-order the data frame by state
+lqLoc = lqLoc[order(lqLoc$State),]
+dennysLoc = dennysLoc[order(dennysLoc$State),]
+
+# Find the states where both Denny's and La Quinta exists
+lq_states = unique(lqLoc$State)
+dennys_states = unique(dennysLoc$State)
+common_states = intersect(lq_states, dennys_states)
+
+# Selecting Denny's and La Quita that exist in states having both of them
+dennys_commonStates = dennysLoc[dennysLoc$State %in% common_states,]
+lq_commonStates = lqLoc[lqLoc$State %in% common_states,]
+
+# Plot Denny's and La Quinta on the map
+
+# Calculate the distance between each of the Denny's and La Quinta in the common_states
 ```
 
 ### Discussion 

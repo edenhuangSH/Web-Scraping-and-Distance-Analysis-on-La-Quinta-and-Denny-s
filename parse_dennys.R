@@ -4,7 +4,7 @@ library(tibble)
 library(dplyr)
 library(methods)
 
-files = dir("data/dennys/", "xml", full.names = TRUE)
+files = dir("data/dennys", "xml", full.names = TRUE)
 res = list()
 
 # parse the dennys xml files and extract information
