@@ -1,7 +1,7 @@
 library(rvest)
 library(stringr)
 library(tibble)
-suppressMessages(library(dplyr))
+library(dplyr)
 
 files = dir("data/dennys/", "xml", full.names = TRUE)
 res = list()
@@ -34,5 +34,5 @@ for (i in seq_along(files)) {
 dennys = bind_rows(res)
 dennys = dennys %>% distinct()
 
-dir.create("data/",showWarnings = FALSE)
+dir.create("data/", showWarnings = FALSE)
 save(dennys,file="data/dennys.Rdata")
