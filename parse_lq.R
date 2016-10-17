@@ -2,6 +2,7 @@ library(rvest)
 library(stringr)
 library(tibble)
 library(dplyr)
+library(methods)
 
 files = dir("data/lq/", "html", full.names = TRUE)
 res = list()

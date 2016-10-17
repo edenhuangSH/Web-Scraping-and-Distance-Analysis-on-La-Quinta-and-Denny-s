@@ -2,6 +2,7 @@ library(rvest)
 library(stringr)
 library(tibble)
 library(dplyr)
+library(methods)
 
 files = dir("data/dennys/", "xml", full.names = TRUE)
 res = list()
@@ -10,19 +11,19 @@ res = list()
 for(i in seq_along(files)) {
 
     file = files[i]
-    page = read_xml(file)
+    page = read_html(file)
     # extract latitude information
     lat = page %>%
-        xml_nodes("latitude") %>%
-        xml_text()
+        html_nodes("latitude") %>%
+        html_text()
     # extract longitude information
     long = page %>%
-        xml_nodes('longitude') %>%
-        xml_text()
+        html_nodes('longitude') %>%
+        html_text()
     # extract state information
     state = page %>%
-        xml_nodes('state') %>%
-        xml_text()
+        html_nodes('state') %>%
+        html_text()
     # store information in a list format
     res[[i]] = data_frame(
         state = state,
