@@ -7,7 +7,7 @@ files = dir("data/dennys/", "xml", full.names = TRUE)
 res = list()
 
 # parse the dennys xml files and extract information
-for (i in seq_along(files)) {
+for(i in seq_along(files)) {
 
     file = files[i]
     page = read_xml(file)
@@ -35,4 +35,4 @@ dennys = bind_rows(res)
 dennys = dennys %>% distinct()
 
 dir.create("data/", showWarnings = FALSE)
-save(dennys,file="data/dennys.Rdata")
+save(dennys, file="data/dennys.Rdata")
