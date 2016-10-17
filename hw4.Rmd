@@ -1,6 +1,24 @@
 ---
 title: "Homework 4"
+author: Faustine, Eden, Shaoji, Yumemichi
 output: html_document
 ---
+<br>
 
-This is a test!
+> "La Quinta is Spanish for next to Denny’s" - Mitch Hedberg
+
+Our group scraped location data from La Quinta and Denny's websites to see if this joke has a kernal of truth in it. 
+
+### Task 1 - Scraping La Quinta
+
+### Task 2 - Scraping Denny's
+
+### Task 3 - Distance Analysis
+
+```{r}
+library('geosphere')
+```
+
+### Discussion 
+
+

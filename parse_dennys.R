@@ -13,22 +13,21 @@ for(i in seq_along(files)) {
     page = read_xml(file)
     # extract latitude information
     lat = page %>%
-        html_nodes("latitude") %>%
-        html_text()
+        xml_nodes("latitude") %>%
+        xml_text()
     # extract longitude information
     long = page %>%
-        html_nodes('longitude') %>%
-        html_text()
+        xml_nodes('longitude') %>%
+        xml_text()
     # extract state information
     state = page %>%
-        html_nodes('state') %>%
-        html_text()
+        xml_nodes('state') %>%
+        xml_text()
     # store information in a list format
     res[[i]] = data_frame(
         state = state,
         lat   = lat,
-        long  = long
-    )
+        long  = long)
 }
 
 dennys = bind_rows(res)
@@ -36,3 +35,4 @@ dennys = dennys %>% distinct()
 
 dir.create("data/", showWarnings = FALSE)
 save(dennys, file="data/dennys.Rdata")
+
