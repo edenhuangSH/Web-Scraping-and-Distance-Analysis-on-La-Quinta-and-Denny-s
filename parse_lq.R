@@ -3,7 +3,7 @@ library(stringr)
 library(tibble)
 library(dplyr)
 
-files = dir("data/lq/", "html", full.names = TRUE)
+files = dir("data/lq", "html", full.names = TRUE)
 res = list()
 
 # parse the lq html files and extract information
@@ -11,7 +11,7 @@ for(i in seq_along(files)) {
 
     file = files[i]
     page = read_html(file)
-    # extract address infp
+    # extract address info
     hotel_info = page %>%
         html_nodes(".hotelDetailsBasicInfoTitle p") %>%
         html_text() %>%
