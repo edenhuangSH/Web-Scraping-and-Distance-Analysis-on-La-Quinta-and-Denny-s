@@ -97,7 +97,7 @@ common_states = intersect(lq_states, dennys_states)
 dennys_commonStates = dennysLoc[dennysLoc$State %in% common_states,]
 lq_commonStates = lqLoc[lqLoc$State %in% common_states,]
 
-# Plot Denny's and La Quinta on the map
+# Plot Denny's and La Quinta on the US map (including Alaska)
 # Make a new data frame that stores all La Quinta and Denny's information for ggplot
 lq_melt = data.frame(Type = rep("La Quinta", nrow(lq_commonStates))) %>%
   cbind(lq_commonStates)
@@ -124,21 +124,73 @@ ggplot() +
 # Calculate the distance between each of the Denny's and La Quinta in the common_states
 # formula: spherical law of cosines
 # reference: http://www.movable-type.co.uk/scripts/latlong.html
-res = list()
-for(i in 1:nrow(hotels)) {
+
+# Build a distance matrix for denny's and La Quinta, with the rows representing Denny's and columns representing La Quinta
+distMat = matrix(rep(0, nrow(dennys_commonStates)*nrow(lq_commonStates)), 
+             nrow = nrow(dennys_commonStates),
+             ncol = nrow(lq_commonStates))
+for(i in 1:nrow(lq_commonStates)) {
   lat1 = rep(lq_commonStates$Lattitude[i], nrow(dennys_commonStates))
   lon1 = rep(lq_commonStates$Longitude[i], nrow(dennys_commonStates))
   lat2 = dennys_commonStates$Lattitude
   lon2 = dennys_commonStates$Longitude
-  res[[i]] = acos(sin(lat1*pi/180)*sin(lat2*pi/180)+
-           cos(lat1*pi/180)*cos(lat2*pi/180)*cos(lon2*pi/180-lon1*pi/180)) * 6371000
+  distMat[,i] = acos(sin(lat1*pi/180)*sin(lat2*pi/180)+
+           cos(lat1*pi/180)*cos(lat2*pi/180)*cos(lon2*pi/180-lon1*pi/180)) * 3959
 }
-
-counts = c()
-for(i in 1:nrow(hotels)) {
-  counts = c(counts, sum(res[[i]] < 150))
+```
+  
+Proportion of La Quinta that have at least one Denny's within 1 mile
+```{r}
+within_1mile = rep(NA, nrow(lq_commonStates))
+for(j in 1:nrow(lq_commonStates)) {
+  within_1mile[j] = sum(distMat[,j] < 1)
 }
-counts
+sum(within_1mile > 0) / length(within_1mile)
+```
+  
+Proportion of La Quinta that have at least one Denny's within 5 miles
+```{r}
+within_5miles = rep(NA, nrow(lq_commonStates))
+for(j in 1:nrow(lq_commonStates)) {
+  within_5miles[j] = sum(distMat[,j] < 5)
+}
+sum(within_5miles > 0) / length(within_5miles)
+```
+  
+Proportion of La Quinta that have at least one Denny's within 10 miles
+```{r}
+within_10miles = rep(NA, nrow(lq_commonStates))
+for(j in 1:nrow(lq_commonStates)) {
+  within_10miles[j] = sum(distMat[,j] < 10)
+}
+sum(within_10miles > 0) / length(within_10miles)
+```
+  
+Proportion of La Quinta that have at least one Denny's within 20 miles
+```{r}
+within_20miles = rep(NA, nrow(lq_commonStates))
+for(j in 1:nrow(lq_commonStates)) {
+  within_20miles[j] = sum(distMat[,j] < 20)
+}
+sum(within_20miles > 0) / length(within_20miles)
+```
+  
+Proportion of La Quinta that have at least one Denny's within 50 miles
+```{r}
+within_50miles = rep(NA, nrow(lq_commonStates))
+for(j in 1:nrow(lq_commonStates)) {
+  within_50miles[j] = sum(distMat[,j] < 50)
+}
+sum(within_50miles > 0) / length(within_50miles)
+```
+  
+Proportion of La Quinta that have at least one Denny's within 100 miles
+```{r}
+within_100miles = rep(NA, nrow(lq_commonStates))
+for(j in 1:nrow(lq_commonStates)) {
+  within_100miles[j] = sum(distMat[,j] < 100)
+}
+sum(within_100miles > 0) / length(within_100miles)
 ```
 
 ### Discussion 
