@@ -46,14 +46,30 @@ using "" .[. != ""] "  some of them is empty line, get rid of them, not equal to
 
 ### Task 2 - Scraping Denny's
 
+The location of each Denny's was obtained by interacting with a third-party location service - this is the service that powers the location map and search feature on the Denny's website. In this case we queried the location provider "Where 2 Get It".
+
+The `get_dennys` script takes the form of an xml request to the where2getit domain. In that request, we first translated the url to the form that was more interpreble. We found three important xml calls: `zipcode`, `radius`, and `limit`. 
+
+The `zipcode` value is a US zipcode that gives us a center point. The `radius` is the maximum distance in miles that the locator looks out from the zipcode. Limit gives the maxiumum number of resturants to return. 
+
+We set the `zipcodes` strategically to cover the entire US. We picked locations in the East and West coast to cover the continetal US. We also picked locations in Alaska and Hawaii to cover all 50 states. The four cities we choose were Washington DC, Los Angeles California, Honolulu HI, and Fairbanks AK. Zipcodes for these cities were found on Wikipedia. 
+
+We wanted the `radius` value to be the smallest values that cover all the locations. We increased the radius until the number of locations stopped increasing. For the four cities we choose, that number happened to be `radius = 5000`. Finally, we set the limit to be `10000`, which is much higher than the number of Denny's locations so that we could be sure we aren't missing some values. 
+
+Finally, we downloaded the resulting xml files with the infomation of Denny's locations in the `data/dennys` folder.
+
+We parsed the Denny's xml files similarly to the La Quinta data. We read the xml file using `rvest` and used the `xml_text()` to extract the text. The location information is in the `<latitude>` and `longitude` node. We also parsed the state data. By looking at the state data we see that we got all the Denny's from 51 states (50 states plus Washington DC).
+
+
 ### Task 3 - Distance Analysis
 
 ```{r}
+load('data/lq.Rdata')
+load('data/dennys.Rdata')
 library('maps')
 library('datasets')
 library('ggplot2')
-load('data/lq.Rdata')
-load('data/dennys.Rdata')
+library('dplyr')
 # Extract the state of La Quinta Hotels, if not in US, treat as NA
 lqStates = rep(NA, nrow(hotels))
 for (i in 1:nrow(hotels)) {
