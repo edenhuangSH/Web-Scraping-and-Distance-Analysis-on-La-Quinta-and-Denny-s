@@ -10,6 +10,39 @@ output: html_document
 Our group scraped location data from La Quinta and Denny's websites to see if this joke has a kernal of truth in it. 
 
 ### Task 1 - Scraping La Quinta
+write up:
+In get_lq.R:
+# url for la quinta site
+# extract individual hotel page urls
+#go laquinta website, download all the information, using read_html
+#first get all of the hotels regarding the location
+#download all of the individual websites
+#strip out the NA using na.omit
+
+# create directory using dir.create
+#showWarnings = don't show the warning
+#give the path I want; data/lq
+
+# download the hotel page for each lq location using a for loop
+#destination file
+#need to put the destfile in the directory, use filepath function, add one /
+
+for parse_lq.R:
+#look at the directory, find all the html file there, read them
+# dir("data/lq", "html") #patern to look for, html
+# create a file
+#save result as a list
+# parse the lq html files and extract information
+# extract address info
+#to do some text processing, \n is new line
+using str_split("\n") %>%#what is vector you wanna split, and what is the value...
+using this to  .[[1]] %>% #get rid of list
+using "" .[. != ""] " #some of them is empty line, get rid of them, not equal to space
+# extract number of rooms
+# Google link includes latitude first then longitude
+# store infomation in list structure
+#give a list, dataframes, willbind them all together
+
 
 ### Task 2 - Scraping Denny's
 
