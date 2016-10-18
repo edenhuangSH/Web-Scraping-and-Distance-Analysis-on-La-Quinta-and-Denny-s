@@ -28,4 +28,3 @@ for(hotel_page in hotel_pages) {
                 #need to put the destfile in the directory, use filepath function, add one /
                 quiet = TRUE)
 }
-
