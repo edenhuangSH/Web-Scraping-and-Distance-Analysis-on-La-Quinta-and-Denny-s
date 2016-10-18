@@ -31,3 +31,4 @@ for (i in seq_along(locals)) {
     download.file(locals[i], dest=paste0('data/dennys/file',
                                          as.character(i),'.xml'))
 }
+
