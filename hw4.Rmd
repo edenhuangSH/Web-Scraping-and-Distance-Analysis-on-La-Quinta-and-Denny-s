@@ -22,7 +22,6 @@ Then, parse the lq html files and extract information using a for loop. Inside t
  
 We also create a Mkefile to link the R script together.
 
-
 ### Task 2 - Scraping Denny's
 
 The location of each Denny's was obtained by interacting with a third-party location service - this is the service that powers the location map and search feature on the Denny's website. In this case we queried the location provider "Where 2 Get It".
