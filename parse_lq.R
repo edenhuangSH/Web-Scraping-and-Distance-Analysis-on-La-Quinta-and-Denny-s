@@ -32,6 +32,12 @@ for(i in seq_along(files)) {
         html_nodes(".minimap") %>%
         html_attr("src") %>%
         str_match("\\|(-?[0-9]{1,2}\\.[0-9]+),(-?[0-9]{1,3}\\.[0-9]+)&")
+    
+    
+    
+    
+    
+    
     # store infomation in list structure
     res[[i]] = data_frame(
         address = paste(hotel_info[1:2],collapse="\n"),
