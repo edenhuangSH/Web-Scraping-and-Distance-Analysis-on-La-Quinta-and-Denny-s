@@ -11,38 +11,19 @@ Our group scraped location data from La Quinta and Denny's websites to see if th
 
 ### Task 1 - Scraping La Quinta
 write up:
-In get_lq.R:
-  url for la quinta site
-  extract individual hotel page urls
- go laquinta website, download all the information, using read_html
- first get all of the hotels regarding the location
- download all of the individual websites
- strip out the NA using na.omit
 
-  create directory using dir.create
- showWarnings = don't show the warning
- give the path I want; data/lq
+1. Write up for get_lq.R:
 
-  download the hotel page for each lq location using a for loop
- destination file
- need to put the destfile in the directory, use filepath function, add one /
+For doing this task, set the site as the mirror La Quinta website and url for the web page that shows all the web link for individual hotel pages. 
+Then we use R package, `rvest`, and use `html_read()` function to read the url address of the mirror La Quinta website that shows the indicidual hotel pages, and use both pipe and `html_nodes()` function to extract individual hotel page urls,  get all of the hotels regarding the location of them. Then download all of the individual websites, and stripping out the NA(missing value) using na.omit. After this, create a directory using `dir_create`, and add "showWarnings = False "so that we don't need to show the warnings again and again. Finally, use a for loop to download the hotel page for each lq location, and use filepath to put the destfile in the directory.
 
-for parse_lq.R:
- look at the directory, find all the html file there, read them
-  dir("data/lq", "html")  patern to look for, html
-  create a file
- save result as a list
-  parse the lq html files and extract information
-  extract address info
- to do some text processing, \n is new line
-using str_split("\n") %>% what is vector you wanna split, and what is the value...
-using this to  .[[1]] %>%  get rid of list
-using "" .[. != ""] "  some of them is empty line, get rid of them, not equal to space
-  extract number of rooms
-  Google link includes latitude first then longitude
-  store infomation in list structure
- give a list, dataframes, willbind them all together
+2. Write up for parse_lq.R:
 
+In this R file, we use `rvest`, `stringr`, `tibble`, `dplyr` and `method` packages. 
+We create a file and, look at the directory we created in get_lq.R, and find all the html file there by using `dir()`, saving the result as a list.
+Then, parse the lq html files and extract information using a for loop. Inside the for loop, we read the every file in the files, using `html_nodes()` to extract address, Phone and Fax information. For getting the tag for `html_nodes()`, we use SelectorGadget, and then by piping and using `html_text()` we can get teh text of teh information, and then we use `str_split()` for this vector, since we want to split the information to Address, Phone number and Fax number, and inside the vector we notice that "\n" is the thing we want to split, so we put this in the `str_split()` function. Then, after we split the information into different lines, we get rid of the list and use `str_trim()` to get rid of the extra space. For getting information of location name, room numbers and floor numbers, we use basically teh same way as getting information for hotel information. For latitude and longitude, we find that the Google link of the small map in the website includes latitude first then longitude, so we use `str_match()` to get the number we want. For the availabilities of Internet acees and swimming pool, we first get the whole information of all amenities and sevices and then we use `str_detect() ` to find if there is swimming pool and internet acces or not, and if there is, the functon will return TURE, if there is not, teh function wil return FALSE. Finally, we put all the information(location name, address, phone, fax, number of rooms, latitude, longtitude, number of floors, swimming pool and internet access) in a data frame, store in the result list.
+ 
+We also create a Mkefile to link the R script together.
 
 ### Task 2 - Scraping Denny's
 
