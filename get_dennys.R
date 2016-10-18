@@ -14,14 +14,12 @@ get_url = function(limit, zip_code, radius) {
 }
 
 # Find locations in the US
-# East   = get_url(limit=10000, zip_code=63101, radius=6000)  # St. Louis, MO
-# West   = get_url(limit=10000, zip_code=80210, radius=6000)  # Denver, CO
-# Alaska = get_url(limit=10000, zip_code=99701, radius=6000)  # Fairbanks, AK
-# Hawaii = get_url(limit=10000, zip_code=96801, radius=6000)  # Honalulu, HI
-# locals  = c(West, East, Alaska, Hawaii)
-East   = get_url(limit=10000, zip_code=20001, radius=10000)  # Washington D.C
-West   = get_url(limit=10000, zip_code=84101, radius=10000)  # SLC, UT
-locals = c(East, West)
+East   = get_url(limit=1000, zip_code=20001, radius=5000)  # Washington, D.C
+West   = get_url(limit=1000, zip_code=90210, radius=5000)  # LA, CA
+Alaska = get_url(limit=1000, zip_code=99701, radius=5000)  # Fairbanks, AK
+Hawaii = get_url(limit=1000, zip_code=96801, radius=5000)  # Honalulu, HI
+locals  = c(West, East, Alaska, Hawaii)
+
 
 # create a data directory
 dir.create("data/dennys",recursive = TRUE, showWarnings = FALSE)
