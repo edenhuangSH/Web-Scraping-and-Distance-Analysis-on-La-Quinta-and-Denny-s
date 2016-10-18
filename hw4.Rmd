@@ -21,7 +21,7 @@ library('datasets')
 library('ggplot2')
 load('data/lq.Rdata')
 load('data/dennys.Rdata')
-# Extract the state of La Quinta Hotels
+# Extract the state of La Quinta Hotels, if not in US, treat as NA
 lqStates = rep(NA, nrow(hotels))
 for (i in 1:nrow(hotels)) {
   s = hotels$address[i]  %>%
@@ -71,12 +71,18 @@ lq_dennys = rbind(lq_melt,dennys_melt)
 lq_dennys$Type = as.factor(lq_dennys$Type)
 
 # Create a data frame that stores information of all US states
-all_states = map_data("state")
+world = map_data("world")
+Alaska = world[world$subregion == "Alaska",] %>%
+  .[!is.na(.$subregion),]
+Alaska$region = Alaska$subregion
+Alaska$subregion = rep(NA, nrow(Alaska))
+all_states = rbind(map_data("state"), Alaska)
 
 # Do the plot
 ggplot() + 
   geom_polygon(data = all_states, aes(x=long, y=lat, group = group), colour="white", fill="blue") +
-  geom_point(data = lq_dennys, aes(x=Longitude, y=Lattitude, group=Type, color=Type))
+  xlim(-180, -60) + 
+  geom_point(data = lq_dennys, aes(x=Longitude, y=Lattitude, group=Type, color=Type), cex = 0.6)
 
 # Calculate the distance between each of the Denny's and La Quinta in the common_states
 ```
