@@ -11,6 +11,7 @@ Our group scraped location data from La Quinta and Denny's websites to see if th
 
 ### Task 1 - Scraping La Quinta
 write up:
+
 1. Write up for get_lq.R:
 For doing this task, set the site as the mirror La Quinta website and url for the web page that shows all the web link for individual hotel pages. 
 Then we use R package, `rvest`, and use `html_read()` function to read the url address of the mirror La Quinta website that shows the indicidual hotel pages, and use both pipe and `html_nodes()` function to extract individual hotel page urls,  get all of the hotels regarding the location of them. Then download all of the individual websites, and stripping out the NA(missing value) using na.omit. After this, create a directory using `dir_create`, and add "showWarnings = False "so that we don't need to show the warnings again and again. Finally, use a for loop to download the hotel page for each lq location, and use filepath to put the destfile in the directory.
