@@ -10,19 +10,67 @@ output: html_document
 Our group scraped location data from La Quinta and Denny's websites to see if this joke has a kernal of truth in it. 
 
 ### Task 1 - Scraping La Quinta
+write up:
+In get_lq.R:
+  url for la quinta site
+  extract individual hotel page urls
+ go laquinta website, download all the information, using read_html
+ first get all of the hotels regarding the location
+ download all of the individual websites
+ strip out the NA using na.omit
+
+  create directory using dir.create
+ showWarnings = don't show the warning
+ give the path I want; data/lq
+
+  download the hotel page for each lq location using a for loop
+ destination file
+ need to put the destfile in the directory, use filepath function, add one /
+
+for parse_lq.R:
+ look at the directory, find all the html file there, read them
+  dir("data/lq", "html")  patern to look for, html
+  create a file
+ save result as a list
+  parse the lq html files and extract information
+  extract address info
+ to do some text processing, \n is new line
+using str_split("\n") %>% what is vector you wanna split, and what is the value...
+using this to  .[[1]] %>%  get rid of list
+using "" .[. != ""] "  some of them is empty line, get rid of them, not equal to space
+  extract number of rooms
+  Google link includes latitude first then longitude
+  store infomation in list structure
+ give a list, dataframes, willbind them all together
+
 
 ### Task 2 - Scraping Denny's
+
+The location of each Denny's was obtained by interacting with a third-party location service - this is the service that powers the location map and search feature on the Denny's website. In this case we queried the location provider "Where 2 Get It".
+
+The `get_dennys` script takes the form of an xml request to the where2getit domain. In that request, we first translated the url to the form that was more interpreble. We found three important xml calls: `zipcode`, `radius`, and `limit`. 
+
+The `zipcode` value is a US zipcode that gives us a center point. The `radius` is the maximum distance in miles that the locator looks out from the zipcode. Limit gives the maxiumum number of resturants to return. 
+
+We set the `zipcodes` strategically to cover the entire US. We picked locations in the East and West coast to cover the continetal US. We also picked locations in Alaska and Hawaii to cover all 50 states. The four cities we choose were Washington DC, Los Angeles California, Honolulu HI, and Fairbanks AK. Zipcodes for these cities were found on Wikipedia. 
+
+We wanted the `radius` value to be the smallest values that cover all the locations. We increased the radius until the number of locations stopped increasing. For the four cities we choose, that number happened to be `radius = 5000`. Finally, we set the limit to be `10000`, which is much higher than the number of Denny's locations so that we could be sure we aren't missing some values. 
+
+Finally, we downloaded the resulting xml files with the infomation of Denny's locations in the `data/dennys` folder.
+
+We parsed the Denny's xml files similarly to the La Quinta data. We read the xml file using `rvest` and used the `xml_text()` to extract the text. The location information is in the `<latitude>` and `longitude` node. We also parsed the state data. By looking at the state data we see that we got all the Denny's from 51 states (50 states plus Washington DC).
+
 
 ### Task 3 - Distance Analysis
 
 ```{r}
-library('dylyr')
+load('data/lq.Rdata')
+load('data/dennys.Rdata')
 library('maps')
 library('datasets')
 library('ggplot2')
-library('geosphere')
-load('data/lq.Rdata')
-load('data/dennys.Rdata')
+library('dplyr')
+
 
 # Build data frames for La Quinta and Denny's that include state, lattitude and longitude
 lqLoc = data.frame(State = hotels$state, 
@@ -72,8 +120,25 @@ ggplot() +
   xlim(-180, -60) + 
   geom_point(data = lq_dennys, aes(x=Longitude, y=Lattitude, group=Type, color=Type), cex = 0.6)
 
-# Calculate the distance between each of the Denny's and La Quinta in the common_states
 
+# Calculate the distance between each of the Denny's and La Quinta in the common_states
+# formula: spherical law of cosines
+# reference: http://www.movable-type.co.uk/scripts/latlong.html
+res = list()
+for(i in 1:nrow(hotels)) {
+  lat1 = rep(lq_commonStates$Lattitude[i], nrow(dennys_commonStates))
+  lon1 = rep(lq_commonStates$Longitude[i], nrow(dennys_commonStates))
+  lat2 = dennys_commonStates$Lattitude
+  lon2 = dennys_commonStates$Longitude
+  res[[i]] = acos(sin(lat1*pi/180)*sin(lat2*pi/180)+
+           cos(lat1*pi/180)*cos(lat2*pi/180)*cos(lon2*pi/180-lon1*pi/180)) * 6371000
+}
+
+counts = c()
+for(i in 1:nrow(hotels)) {
+  counts = c(counts, sum(res[[i]] < 150))
+}
+counts
 ```
 
 ### Discussion 
