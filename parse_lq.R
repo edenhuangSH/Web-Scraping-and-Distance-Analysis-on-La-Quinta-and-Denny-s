@@ -11,7 +11,6 @@ res = list()#save result as a list
 
 # parse the lq html files and extract information
 for(i in seq_along(files)) {
-
   file = files[i]
   page = read_html(file)
   # extract address info

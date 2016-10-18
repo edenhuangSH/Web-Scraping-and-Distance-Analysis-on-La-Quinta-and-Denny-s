@@ -69,6 +69,7 @@ load('data/dennys.Rdata')
 library('maps')
 library('datasets')
 library('ggplot2')
+library('dplyr')
 # Extract the state of La Quinta Hotels, if not in US, treat as NA
 lqStates = rep(NA, nrow(hotels))
 for (i in 1:nrow(hotels)) {
@@ -132,7 +133,26 @@ ggplot() +
   xlim(-180, -60) + 
   geom_point(data = lq_dennys, aes(x=Longitude, y=Lattitude, group=Type, color=Type), cex = 0.6)
 
+
 # Calculate the distance between each of the Denny's and La Quinta in the common_states
+# formula: spherical law of cosines
+# reference: http://www.movable-type.co.uk/scripts/latlong.html
+res = list()
+for(i in 1:nrow(hotels)) {
+  lat1 = rep(hotels$lat[i], nrow(dennys))
+  lon1 = rep(hotels$long[i], nrow(dennys))
+  lat2 = dennys$latitude
+  lon2 = dennys$longtitude
+  res[i] = acos(sin(lat1*pi/180)*sin(lat2*pi/180)+
+           cos(lat1*pi/180)*cos(lat2*pi/180)*cos(lon2*pi/180-lon1*pi/180)) * 6371000
+}
+rest
+
+counts = c()
+for(i in 1:nrow(hotels)) {
+  counts = c(counts, sum(res[i] < 150))
+}
+counts
 ```
 
 ### Discussion 
