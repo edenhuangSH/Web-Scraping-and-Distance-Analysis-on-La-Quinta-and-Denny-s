@@ -45,5 +45,22 @@ for(i in seq_along(files)) {
 
 hotels = bind_rows(res)
 
+# Extract the state of La Quinta Hotels, if not in US, treat as NA
+lqStates = rep(NA, nrow(hotels))
+for (i in 1:nrow(hotels)) {
+  s = hotels$address[i]  %>%
+    strsplit(., ",") %>%
+    unlist() %>%
+    tail(n = 1) %>%
+    strsplit(.," ") %>%
+    unlist() %>%
+    .[2]
+  if (s %in% c(state.abb, "DC")) {
+    lqStates[i] = s
+  }
+}
+
+hotels$state = lqStates
+
 dir.create("data/",showWarnings = FALSE)
 save(hotels, file="data/lq.Rdata")

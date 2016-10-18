@@ -16,29 +16,16 @@ Our group scraped location data from La Quinta and Denny's websites to see if th
 ### Task 3 - Distance Analysis
 
 ```{r}
+library('dylyr')
 library('maps')
 library('datasets')
 library('ggplot2')
 library('geosphere')
 load('data/lq.Rdata')
 load('data/dennys.Rdata')
-# Extract the state of La Quinta Hotels, if not in US, treat as NA
-lqStates = rep(NA, nrow(hotels))
-for (i in 1:nrow(hotels)) {
-  s = hotels$address[i]  %>%
-    strsplit(., ",") %>%
-    unlist() %>%
-    tail(n = 1) %>%
-    strsplit(.," ") %>%
-    unlist() %>%
-    .[2]
-  if (s %in% c(state.abb, "DC")) {
-    lqStates[i] = s
-  }
-}
 
 # Build data frames for La Quinta and Denny's that include state, lattitude and longitude
-lqLoc = data.frame(State = lqStates, 
+lqLoc = data.frame(State = hotels$state, 
                    Lattitude = as.numeric(hotels$lat), 
                    Longitude = as.numeric(hotels$long))
 dennysLoc = data.frame(State = dennys$state, 
