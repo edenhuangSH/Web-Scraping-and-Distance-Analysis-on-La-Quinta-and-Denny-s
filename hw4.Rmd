@@ -144,9 +144,9 @@ for(i in 1:nrow(hotels)) {
   lat2 = dennys$latitude
   lon2 = dennys$longtitude
   res[i] = acos(sin(lat1*pi/180)*sin(lat2*pi/180)+
-           cos(lat1*pi/180)*cos(lat2*pi/180)*cos(lon2*pi/180-lon1*pi/180)) * 6371000
+           cos(lat1*pi/180)*cos(lat2*pi/180)*cos(lon2*pi/180-lon1*pi/180)) * 3958756
 }
-rest
+res
 
 counts = c()
 for(i in 1:nrow(hotels)) {
