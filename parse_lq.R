@@ -40,8 +40,7 @@ for(i in seq_along(files)) {
     str_trim() %>%
     str_replace("Floors:", "") %>%
     as.integer()
-<<<<<<< HEAD
-  
+
   Amenity_and_service = page %>%
     html_nodes(".section:nth-child(2) .pptab_contentL li , .section:nth-child(1) .pptab_contentL li") %>%
     html_text() %>%
@@ -51,17 +50,6 @@ for(i in seq_along(files)) {
     any()
   Internet_Access = str_detect(Amenity_and_service,"Internet Access") %>%
     any()
-  
-=======
-
- # Amenity_and_service = page %>%
-   # html_nodes(".section:nth-child(2) .pptab_contentL li , .section:nth-child(1) .pptab_contentL li") %>%
-    #html_text() %>%
-    #str_trim() %>%
-    #as.vector()
-
->>>>>>> fb2895d34ea2a26d92f1208ce6699ea9b2a256fa
-  #.section:nth-child(1) li:nth-child(4)
 
   # Google link includes latitude first then longitude
   lat_long = page %>%
@@ -80,9 +68,6 @@ for(i in seq_along(files)) {
     n_floors = n_floors,
     Swimming_Pool = Swimming_Pool,
     Internet_Access = Internet_Access
-    #Amenity_and_service = c(Amenity_and_service)
-    #internet availability,
-    #internet availability, swimming pools, number of rooms, floors
   )
 }
 
