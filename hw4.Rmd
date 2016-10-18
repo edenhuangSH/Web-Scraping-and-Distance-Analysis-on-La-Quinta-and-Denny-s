@@ -49,23 +49,10 @@ library('maps')
 library('datasets')
 library('ggplot2')
 library('dplyr')
-# Extract the state of La Quinta Hotels, if not in US, treat as NA
-lqStates = rep(NA, nrow(hotels))
-for (i in 1:nrow(hotels)) {
-  s = hotels$address[i]  %>%
-    strsplit(., ",") %>%
-    unlist() %>%
-    tail(n = 1) %>%
-    strsplit(.," ") %>%
-    unlist() %>%
-    .[2]
-  if (s %in% c(state.abb, "DC")) {
-    lqStates[i] = s
-  }
-}
+
 
 # Build data frames for La Quinta and Denny's that include state, lattitude and longitude
-lqLoc = data.frame(State = lqStates, 
+lqLoc = data.frame(State = hotels$state, 
                    Lattitude = as.numeric(hotels$lat), 
                    Longitude = as.numeric(hotels$long))
 dennysLoc = data.frame(State = dennys$state, 
@@ -118,18 +105,17 @@ ggplot() +
 # reference: http://www.movable-type.co.uk/scripts/latlong.html
 res = list()
 for(i in 1:nrow(hotels)) {
-  lat1 = rep(hotels$lat[i], nrow(dennys))
-  lon1 = rep(hotels$long[i], nrow(dennys))
-  lat2 = dennys$latitude
-  lon2 = dennys$longtitude
-  res[i] = acos(sin(lat1*pi/180)*sin(lat2*pi/180)+
+  lat1 = rep(lq_commonStates$Lattitude[i], nrow(dennys_commonStates))
+  lon1 = rep(lq_commonStates$Longitude[i], nrow(dennys_commonStates))
+  lat2 = dennys_commonStates$Lattitude
+  lon2 = dennys_commonStates$Longitude
+  res[[i]] = acos(sin(lat1*pi/180)*sin(lat2*pi/180)+
            cos(lat1*pi/180)*cos(lat2*pi/180)*cos(lon2*pi/180-lon1*pi/180)) * 6371000
 }
-rest
 
 counts = c()
 for(i in 1:nrow(hotels)) {
-  counts = c(counts, sum(res[i] < 150))
+  counts = c(counts, sum(res[[i]] < 150))
 }
 counts
 ```
