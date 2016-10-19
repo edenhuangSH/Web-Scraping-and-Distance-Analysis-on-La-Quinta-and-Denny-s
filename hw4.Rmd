@@ -157,7 +157,6 @@ for(i in 1:nrow(lq_commonStates)) {
 ```
 
 
-
 Finally, we plot the histogram of the number of nearby Denny's for each La Quinta:
 ```{r}
 hist(counts, main="number of nearby Denny's for a La Quinta", xlab = "numbers", ylab = "")
