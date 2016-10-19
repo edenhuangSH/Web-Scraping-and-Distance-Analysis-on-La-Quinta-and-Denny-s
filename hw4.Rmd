@@ -10,7 +10,7 @@ output: html_document
 Our group scraped location data from La Quinta and Denny's websites to see if this joke has a kernal of truth in it. 
 
 ### Task 1 - Scraping La Quinta
-write up:
+
 In get_lq.R:
   url for la quinta site
   extract individual hotel page urls
@@ -137,7 +137,7 @@ ggplot() +
 # Calculate the distance between each of the Denny's and La Quinta in the common_states
 # formula: spherical law of cosines
 # reference: http://www.movable-type.co.uk/scripts/latlong.html
-res = list()
+res = matrix(nrows)
 for(i in 1:nrow(hotels)) {
   lat1 = rep(hotels$lat[i], nrow(dennys))
   lon1 = rep(hotels$long[i], nrow(dennys))
