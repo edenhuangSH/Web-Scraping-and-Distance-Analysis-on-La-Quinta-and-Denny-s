@@ -163,8 +163,8 @@ ggplot(as.data.frame(counts),aes(as.factor(counts))) +
   geom_bar(fill="lightgreen", color="grey50") +
   ggtitle("Number of nearby Denny's for a La Quinta") +
   xlab("Number of Denny's Locations")
-
 ```
+From the graph we can see that a large proportion of La Quinta's has one Denny's within 5 miles. 
 
 
 
