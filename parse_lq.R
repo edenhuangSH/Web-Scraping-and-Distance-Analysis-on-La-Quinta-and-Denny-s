@@ -6,8 +6,8 @@ library(tibble)
 library(dplyr)
 library(methods)
 
-files = dir("data/lq", "html", full.names = TRUE)# create a file
-res = list()#save result as a list
+files = dir("data/lq", "html", full.names = TRUE) # open the file in directory "data/lq"
+res = list() #initialize the results as a list
 
 # parse the lq html files and extract information
 for(i in seq_along(files)) {
@@ -17,11 +17,10 @@ for(i in seq_along(files)) {
   hotel_info = page %>%
     html_nodes(".hotelDetailsBasicInfoTitle p") %>%
     html_text() %>% #to do some text processing, \n is new line
-    str_split("\n") %>%#what is vector you wanna split, and what is the value...
+    str_split("\n") %> %#what is vector you wanna split, and what is the value...
     .[[1]] %>% #get rid of list
     str_trim() %>%
     .[. != ""]#some of them is empty line, get rid of them, not equal to space
-  # extract number of rooms
   
   location_name = page %>%
     html_nodes("h1") %>%
@@ -51,11 +50,12 @@ for(i in seq_along(files)) {
   Internet_Access = str_detect(Amenity_and_service,"Internet Access") %>%
     any()
 
-  # Google link includes latitude first then longitude
+  # GoogleMap link includes latitude first then longitude
   lat_long = page %>%
     html_nodes(".minimap") %>%
     html_attr("src") %>%
     str_match("\\|(-?[0-9]{1,2}\\.[0-9]+),(-?[0-9]{1,3}\\.[0-9]+)&")
+  
   # store infomation in list structure
   res[[i]] = data_frame(
     location_name = location_name,
@@ -71,10 +71,10 @@ for(i in seq_along(files)) {
   )
 }
 
-#give a list, dataframes, willbind them all together
+#give a list, dataframes, after binding them all together
 hotels = bind_rows(res)
 
-# Extract the state of La Quinta Hotels, if not in US, treat as NA
+# Extract the state of La Quinta Hotels; if not in US, treat as NA
 lqStates = rep(NA, nrow(hotels))
 for (i in 1:nrow(hotels)) {
   s = hotels$address[i]  %>%
