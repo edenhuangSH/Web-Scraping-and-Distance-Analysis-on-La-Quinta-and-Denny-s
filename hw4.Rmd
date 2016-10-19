@@ -46,6 +46,7 @@ Finally, we downloaded the resulting xml files with the infomation of Denny's lo
 
 We parsed the Denny's xml files similarly to the La Quinta data. We read the xml file using `rvest` and used the `xml_text()` to extract the text. The location information is in the `<latitude>` and `longitude` node. We also parsed the state data. By looking at the state data we see that we got all the Denny's from 51 states (50 states plus Washington DC).
 
+Our `Makefile` automatically builds the directory and documents by specifying the dependncies. We only need to run the `Makefile` to execute our codes.
 
 
 ### Task 3 - Distance Analysis
