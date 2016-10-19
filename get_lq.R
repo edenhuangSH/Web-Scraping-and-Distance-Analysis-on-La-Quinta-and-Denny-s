@@ -7,7 +7,7 @@ url = paste0(site,"hotel-listings.html")
 
 # extract individual hotel page urls
 #go laquinta website, download all the information
-#first get all of the hotels regarding the location
+#first get all of the hotels regardless of the location
 #download all of the individual websites
 page = read_html(url)
 hotel_pages = page %>%
@@ -24,7 +24,7 @@ dir.create("data/lq",recursive = TRUE,showWarnings = FALSE)# create a directory
 for(hotel_page in hotel_pages) {
   hotel_url = paste0(site, hotel_page)
   download.file(url = hotel_url,
-                destfile = file.path("data/lq",hotel_page),#destination file
+                destfile = file.path("data/lq", hotel_page),#destination file
                 #need to put the destfile in the directory, use filepath function, add one /
                 quiet = TRUE)
 }
