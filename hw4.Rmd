@@ -19,7 +19,7 @@ For the next step, we downloaded the resulting html files of each La Quinta loca
 
 We moved on to parse the La Quinta's html files by `parse_lq.R`. First we loaded the sequence of html files in the created directory using `files()` and initialzed the results that hold all the information as a list. Then we extracted the desirable information using a for loop. Inside the for loop, we read every html file and used `html_nodes()` to extract the basic information about the hotel, including address, Phone and Fax information. 
 
-Using SelectorGadget and piping, we used `html_text()` to extract the text of the information as a vector of characters, and then used `str_split()` to split the information to Address, Phone number and Fax number in different lines; we split the vectorby "\n", the separator in the vector. After the split, we unlisted the object and use `str_trim()` to remove the extra space. Same method of parsing was applied to obtain information about the location name, room numbers, floor numbers and amenities/services. 
+Using SelectorGadget and piping, we used `html_text()` to extract the text of the information as a vector of characters, and then used `str_split()` to split the information to Address, Phone number and Fax number in different lines; we split the vector by newline, the separator in the vector. After the split, we unlisted the object and use `str_trim()` to remove the extra space. Same method of parsing was applied to obtain information about the location name, room numbers, floor numbers and amenities/services. 
 
 For latitude and longitude, we used regular expressions to locate the numbers in the html file  of the displayed Google minimap of the hotel information website. For the availabilities of Internet acees and swimming pool, we first obtained the entire information of all amenities and sevices and then used `str_detect() ` to find if there is swimming pool and internet acces in the given hotel; `any()` returns the result as binary variables. 
 
@@ -53,17 +53,16 @@ We parsed the Denny's xml files similarly to the La Quinta data. We read the xml
 To estimate the veracity of the statement on the general trend of distances between La Quinta and Denny's, we used *mapping of locations* (ggplot) and *histogram* of number of nearby Denny's for a fixed La Quinta. We also calculated the *proportions* of La Quinta's that have at least one Denny's within different radius.
 
 
-## Mapping of locations 
+#### Mapping of locations 
 First we need to rebuild dataframes removing characteristics other than lattitude, longtitude and state. Furthermore, we are only interested in the case of U.S., so we removed the rows (La Quinta or Denny's) without nonempty characteristis `state`. The dataframes were updated as `lqLoc` and `dennysLoc`. 
+
 ```{r}
 load('data/lq.Rdata')
 load('data/dennys.Rdata')
-library('dplyr')
-
-# load packages for visualization:
-library('maps')
-library('datasets')
-library('ggplot2')
+suppressMessages(suppressWarnings(library('dplyr')))
+suppressMessages(suppressWarnings(library('maps')))
+suppressMessages(suppressWarnings(library('datasets')))
+suppressMessages(suppressWarnings(library('ggplot2')))
 
 
 # Build data frames for La Quinta and Denny's that include state, lattitude and longitude
@@ -80,6 +79,7 @@ dennysLoc = dennysLoc[dennysLoc$State != "",]
 ```
 
 Note that it makes sense to compare the proximity of Denny's and La Quinta in a state where both of them exists. Therefore we obtain `dennys_commonStates` and `lq_commonStates` by filtering the common states (by `unique()` and `intersect()`), and then subsetting the dataframe whose charactersitics of `State` falls in the sequence of common states. Beforehand we need to reordering the dataframe, Then we won't worry about comparing a Denny's in Minnesota with a La Quinta in North Carolina that leads to large bias in the final result. 
+
 ```{r}
 # Re-order the data frame by state
 lqLoc = lqLoc[order(lqLoc$State),]
@@ -96,6 +96,7 @@ lq_commonStates = lqLoc[lqLoc$State %in% common_states,]
 ```
 
 Then we plot all the locations of Denny's and La Quinta on the US map (including Alaska). First we make a new data frame that stores all La Quinta and Denny's information for ggplot, and then create a data frame that stores information of only US states. Then we use `ggplot()` to show each location of the two types of business.
+
 ```{r}
 # Make a new data frame that stores all La Quinta and Denny's information for ggplot
 lq_melt = data.frame(Type = rep("La Quinta", nrow(lq_commonStates))) %>%
@@ -119,22 +120,22 @@ ggplot() +
   xlim(-170, -65) + 
   geom_point(data = lq_dennys, aes(x=Longitude, y=Lattitude, group=Type, color=Type), cex = 0.6)
 ```
+
 From the graph we can see that Denny's and La Quintas have similar location distribution nationwide.
 
 
-##Histogram of Number of Nearby Denny's for a La Quinta
+#### Histogram of Number of Nearby Denny's for a La Quinta
 
 To take a further look at the proximity of these two business, a histogram of total number of nearby Denny's would be useful.
 
-First we need to initialize an empty matrix with dimension as the number of Denny's (row) by the number of La Quintas (column). Then we fill the matrix by fixing one La Quinta (subsetting each of the sequence by the index) and compute the distance of each Denny's with this particular la Quinta; each iteration generates a result by column. The distance formula is the spherical law of cosines. 
+First we need to initialize an empty matrix with dimension as the number of Denny's (row) by the number of La Quintas (column). Then we fill the matrix by fixing one La Quinta (subsetting each of the sequence by the index) and compute the distance of each Denny's with this particular la Quinta; each iteration generates a result by column. The distance formula is the spherical law of cosines [^1]. 
 
 Going through the loop we obtained a full matrix of distances. For example, the *i,j* entry of the matrix *distMat* denotes the distance between *ith Denny's* in the dataframe and *jth La Quinta*. 
 
 Then we count the number of Denny's within 5 miles in distance for each La Quinta.
-```{r}
-# formula: spherical law of cosines
-# reference: http://www.movable-type.co.uk/scripts/latlong.html
 
+```{r}
+# Spherical law of cosines
 # Build a distance matrix for denny's and La Quinta, with the rows representing Denny's and columns representing La Quinta
 distMat = matrix(rep(0,nrow(dennys_commonStates)*nrow(lq_commonStates)), 
                  nrow = nrow(dennys_commonStates),
@@ -158,12 +159,15 @@ for(i in 1:nrow(lq_commonStates)) {
 
 Finally, we plot the histogram of the number of nearby Denny's for each La Quinta:
 ```{r}
-hist(counts, main="number of nearby Denny's for a La Quinta", xlab = "numbers", ylab = "")
+hist(counts, main="number of nearby Denny's for a La Quinta", 
+     xlab = "Number of Denny's Locations", ylab = "Count")
 ```
 
 
 
-## "Proportion analysis" --- proportion of La Quinta's that neighbors a Denny's within different choices of radius.
+#### Proportion Analysis
+
+We wanted to look at the proportion of La Quinta's that neighbors a Denny's within different choices of radius.
 
 The general method of this analysis is as follows:
 
@@ -173,48 +177,36 @@ The general method of this analysis is as follows:
 
 3) Compute the ratio of this number of La Quinta to the total number of La Quintas. 
 
+4) Repeat for different choices of radius (in miles).
+
 According to the following results, the La Quintas and Denny's indeed seem to be loyal neighbors. 
 
-**1) Proportion of La Quintas that have at least one Denny's within 1 mile is around 26%**
 ```{r}
-within_1mile = rep(NA, nrow(lq_commonStates))
-for(j in 1:nrow(lq_commonStates)) {
-  within_1mile[j] = sum(distMat[,j] < 1)
+range = 1:100
+prop = numeric(length(range))
+r = numeric(nrow(lq_commonStates))
+for(i in range) {
+  for(j in 1:nrow(lq_commonStates)) {
+      r[j] = sum(distMat[,j] < i)
+  }
+    prop[i] = sum(r > 0) / length(r)
 }
-sum(within_1mile > 0) / length(within_1mile)
+
+plot(range, prop, type = 'l', 
+     main = 'Proportion of La Quintas with Atleast One Dennys within n miles', 
+     ylab = 'Proportion of La Quinta Locations', xlab = 'Miles')
 ```
-  
-**2) Proportion of La Quintas that have at least one Denny's within 5 miles is around 60%**
-```{r}
-within_5miles = rep(NA, nrow(lq_commonStates))
-for(j in 1:nrow(lq_commonStates)) {
-  within_5miles[j] = sum(distMat[,j] < 5)
-}
-sum(within_5miles > 0) / length(within_5miles)
-```
-  
-**3) Proportion of La Quintas that have at least one Denny's within 10 miles is around 72%**
-```{r}
-within_10miles = rep(NA, nrow(lq_commonStates))
-for(j in 1:nrow(lq_commonStates)) {
-  within_10miles[j] = sum(distMat[,j] < 10)
-}
-sum(within_10miles > 0) / length(within_10miles)
-```
-  
-**4) Proportion of La Quintas that have at least one Denny's within 20 miles is around 80%**
-```{r}
-within_20miles = rep(NA, nrow(lq_commonStates))
-for(j in 1:nrow(lq_commonStates)) {
-  within_20miles[j] = sum(distMat[,j] < 20)
-}
-sum(within_20miles > 0) / length(within_20miles)
-```
+
+The proportion of La Quintas that have at least one Denny's within one mile is around `r prop[1]`. The proportion of La Quintas within five miles is `r prop[5]`, and the proportion of La Quintas within ten miles is `r prop[10]`.
   
 
-## Further Discussion:
+### Further Discussion:
 
 To further verify the joke about these two neighbors, more analysis is necessary. We can introduce some blocks to the location such as metro area, along the highway or countryside. More comparisons with Denny's should be done as well. For example, we could go through the same procedure and compare the distance between West Bestern, Motel 6 or Quality Inn (or other peer budget hotels) and Denny's. Conversely, we should also compare the proximity of Perkins, Dominos or Piza Hut to La Quinta's and see if any of the casual restaurant favors La Quinta in particular. 
+
+### References
+
+Haversine Formula. http://www.movable-type.co.uk/scripts/latlong.html
 
 
 
