@@ -4,14 +4,9 @@ library(tibble)
 library(dplyr)
 library(methods)
 
-<<<<<<< HEAD
 # intialize
 files = dir("data/lq", "html", full.names = TRUE)
 res = list()
-=======
-files = dir("data/lq", "html", full.names = TRUE) # open the file in directory "data/lq"
-res = list() #initialize the results as a list
->>>>>>> 90e002802cc667de4abc994109797b12430c0454
 
 # parse the lq html files and extract information
 for(i in seq_along(files)) {
@@ -20,21 +15,12 @@ for(i in seq_along(files)) {
   # extract address info
   hotel_info = page %>%
     html_nodes(".hotelDetailsBasicInfoTitle p") %>%
-<<<<<<< HEAD
     html_text() %>%
     str_split("\n") %>%
     .[[1]] %>%
     str_trim() %>%
     .[. != ""]
 
-=======
-    html_text() %>% #to do some text processing, \n is new line
-    str_split("\n") %> %#what is vector you wanna split, and what is the value...
-    .[[1]] %>% #get rid of list
-    str_trim() %>%
-    .[. != ""]#some of them is empty line, get rid of them, not equal to space
-  
->>>>>>> 90e002802cc667de4abc994109797b12430c0454
   location_name = page %>%
     html_nodes("h1") %>%
     html_text()
@@ -70,7 +56,7 @@ for(i in seq_along(files)) {
     html_nodes(".minimap") %>%
     html_attr("src") %>%
     str_match("\\|(-?[0-9]{1,2}\\.[0-9]+),(-?[0-9]{1,3}\\.[0-9]+)&")
-  
+
   # store infomation in list structure
   res[[i]] = data_frame(
     location_name = location_name,
