@@ -11,7 +11,7 @@ Our group scraped location data from La Quinta and Denny's websites to see if th
 
 ### Task 1 - Scraping La Quinta
 
-`get_lq.R` creates and save the html files of each La Quinta hotel. First we obtained the url of hotel listing page from the La Quinta website. This url page contains all the web links for each individual hotel. 
+The location for each La Quinta was obtained by html webpage scraping. `get_lq.R` creates and save the html files of each La Quinta hotel. First we obtained the url of hotel listing page from the La Quinta website. This url page contains all the web links for each individual hotel. 
 
 Then we extracted individual hotel page from the url. Installing R package `rvest` (for processing and manipulation of html data), we used `html_read()` to read html data from the url of individual html pages. Then `html_nodes()` specifies the nodes as hotel listings from the html document using CSS selectors, and `html_attr('href')` extracts all of each hotel's attribute by its destination, removing the missing values. 
 
@@ -55,6 +55,7 @@ To estimate the veracity of the statement on the general trend of distances betw
 
 
 #### Mapping of locations 
+
 First we need to rebuild dataframes removing characteristics other than lattitude, longtitude and state. Furthermore, we are only interested in the case of U.S., so we removed the rows (La Quinta or Denny's) without nonempty characteristis `state`. The dataframes were updated as `lqLoc` and `dennysLoc`. 
 
 ```{r}
@@ -129,11 +130,11 @@ From the graph we can see that Denny's and La Quintas have similar location dist
 
 To take a further look at the proximity of these two business, a histogram of total number of nearby Denny's would be useful.
 
-First we need to initialize an empty matrix with dimension as the number of Denny's (row) by the number of La Quintas (column). Then we fill the matrix by fixing one La Quinta (subsetting each of the sequence by the index) and compute the distance of each Denny's with this particular la Quinta; each iteration generates a result by column. The distance formula is the spherical law of cosines [^1]. 
+First we need to initialize an empty matrix with dimension as the number of Denny's (row) by the number of La Quintas (column). Then we fill the matrix by fixing one La Quinta (subsetting each of the sequence by the index) and compute the distance of each Denny's with this particular la Quinta; each iteration generates a result by column. The distance formula is the spherical law of cosine (Haversine http://www.movable-type.co.uk/scripts/latlong.html). 
 
 Going through the loop we obtained a full matrix of distances. For example, the *i,j* entry of the matrix *distMat* denotes the distance between *ith Denny's* in the dataframe and *jth La Quinta*. 
 
-Then we count the number of Denny's within 5 miles in distance for each La Quinta.
+Then we count the number of Denny's within five miles in distance for each La Quinta.
 
 ```{r}
 # Spherical law of cosines
@@ -206,13 +207,4 @@ The proportion of La Quintas that have at least one Denny's within one mile is a
 
 ### Further Discussion:
 
-To further verify the joke about these two neighbors, more analysis is necessary. We can introduce some blocks to the location such as metro area, along the highway or countryside. More comparisons with Denny's should be done as well. For example, we could go through the same procedure and compare the distance between West Bestern, Motel 6 or Quality Inn (or other peer budget hotels) and Denny's. Conversely, we should also compare the proximity of Perkins, Dominos or Piza Hut to La Quinta's and see if any of the casual restaurant favors La Quinta in particular. 
-
-### References
-
-Haversine Formula. http://www.movable-type.co.uk/scripts/latlong.html
-
-
-
-
-
+To further verify the joke about these two neighbors, more analysis is necessary. We can introduce some blocks to the location such as metro area, along the highway or countryside. More comparisons with Denny's should be done as well. For example, we could go through the same procedure and compare the distance between Best Western, Motel 6 or Quality Inn (or other peer budget hotels) and Denny's. Conversely, we should also compare the proximity of Perkins, Dominos or Pizza Hut to La Quinta's and see if any of the casual restaurant favors La Quinta in particular. 
